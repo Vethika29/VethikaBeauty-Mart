@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reviews - VETHIKA MART</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.rv-wrap{max-width:900px;margin:20px auto;padding:0 5%}
+.rv-card{background:#fff;border-radius:6px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px #ddd}
+.rv-card h3{margin:0 0 4px}
+.rv-stars{color:#ff9f00;font-weight:bold}
+.rv-btn{background:#2874f0;color:#fff;border:0;padding:8px 14px;border-radius:4px;cursor:pointer;margin-top:8px}
+.rv-list{margin-top:10px;border-top:1px solid #eee;padding-top:8px}
+.rv-item{padding:6px 0;border-bottom:1px dashed #eee;font-size:14px}
+.rv-back{display:inline-block;margin:16px 5%;color:#2874f0;text-decoration:none;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="top" style="background:#2874f0;color:#fff;padding:10px 5%;">
+  <div class="logo" style="font-size:22px;font-weight:800;">VETHIKA <span style="color:#ffe500">MART</span> — Reviews</div>
+</div>
+<a class="rv-back" href="/index.html">&larr; Back to Store</a>
+<div class="rv-wrap" id="list">Loading products...</div>
+
+<script>
+const user = JSON.parse(localStorage.getItem("bm_user") || "null");
+
+async function api(url, opt = {}) {
+  const r = await fetch(url, { headers: { "Content-Type": "application/json" }, ...opt });
+  let data = null;
+  try { data = await r.json(); } catch (e) {}
+  if (!r.ok) throw (data || { message: "Request failed" });
+  return data;
+}
+
+function stars(avg) {
+  const full = Math.round(avg);
+  let s = "";
+  for (let i = 1; i <= 5; i++) s += i <= full ? "★" : "☆";
+  return s;
+}
+
+async function loadAll() {
+  const products = await api("/api/products");
+  const container = document.querySelector("#list");
+  container.innerHTML = "";
+  for (const p of products) {
+    const div = document.createElement("div");
+    div.className = "rv-card";
+    div.innerHTML = `<h3>${p.name}</h3><div>${p.brand} • ${p.category}</div>
+      <div class="rv-stars" id="stars-${p.id}">Loading rating...</div>
+      <button class="rv-btn" onclick="writeReview(${p.id})">Write a Review</button>
+      <div class="rv-list" id="reviews-${p.id}"></div>`;
+    container.appendChild(div);
+    loadReviews(p.id);
+  }
+}
+
+async function loadReviews(productId) {
+  try {
+    const data = await api(`/api/reviews/product/${productId}`);
+    document.querySelector(`#stars-${productId}`).innerText =
+      data.count > 0 ? `${stars(data.average)} ${data.average} (${data.count} reviews)` : "No reviews yet";
+    const listDiv = document.querySelector(`#reviews-${productId}`);
+    listDiv.innerHTML = data.reviews.map(r =>
+      `<div class="rv-item"><b>${r.userName}</b> — ${stars(r.rating)}<br>${r.comment || ""}</div>`
+    ).join("");
+  } catch (e) {
+    document.querySelector(`#stars-${productId}`).innerText = "Could not load rating";
+  }
+}
+
+async function writeReview(productId) {
+  if (!user) { alert("Please login first from the main store page."); return; }
+  const rating = prompt("Rate this product from 1 to 5:");
+  if (!rating) return;
+  const num = parseInt(rating, 10);
+  if (isNaN(num) || num < 1 || num > 5) { alert("Please enter a number between 1 and 5."); return; }
+  const comment = prompt("Write a short comment (optional):") || "";
+  try {
+    const res = await api(`/api/reviews/${productId}/${user.id}`, {
+      method: "POST",
+      body: JSON.stringify({ rating: num, comment })
+    });
+    alert(res.message || "Review submitted!");
+    loadReviews(productId);
+  } catch (e) {
+    alert(e.message || "Could not submit review.");
+  }
+}
+
+loadAll();
+</script>
+</body>
+</html>

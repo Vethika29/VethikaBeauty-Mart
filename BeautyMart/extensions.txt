@@ -1,0 +1,26 @@
+REQUIRED / RECOMMENDED VS CODE EXTENSIONS
+=========================================
+1. Extension Pack for Java
+ ID: vscjava.vscode-java-pack
+2. Spring Boot Extension Pack
+ ID: vmware.vscode-spring-boot
+3. Spring Initializr Java Support
+ ID: vscjava.vscode-spring-initializr
+4. Extension Pack for HTML CSS
+ Recommended for frontend editing.
+
+NOT AN EXTENSION:
+- JDK 17 or newer must be installed.
+- Maven is required. The project includes pom.xml.
+- MySQL Server is required for the configured database.
+
+After extracting:
+1. Open the BeautyMart folder in VS Code.
+2. Install the extensions above.
+3. Install JDK 17+.
+4. Install/start MySQL.
+5. Run database/setup.sql in MySQL Workbench.
+6. Open src/main/resources/application.properties.
+7. Replace YOUR_MYSQL_PASSWORD with your MySQL root password.
+8. In VS Code, run BeautyMartApplication.java.
+9. Open http://localhost:8080

@@ -1,0 +1,11 @@
+{
+ "recommendations": [
+ "vscjava.vscode-java-pack",
+ "vmware.vscode-spring-boot",
+ "vscjava.vscode-spring-initializr",
+ "redhat.java",
+ "vscode.html-language-features",
+ "ecmel.vscode-html-css",
+ "dbaeumer.vscode-eslint"
+ ]
+}
