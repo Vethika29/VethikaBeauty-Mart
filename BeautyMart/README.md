@@ -1,5 +1,7 @@
 # VETHIKA MART
 Mini Full-Stack Cosmetics E-Commerce Project
+## Live Demo
+🔗 https://vethikabeauty-mart-production.up.railway.app
 
 ## Stack
 Frontend: HTML + CSS + JavaScript
@@ -47,3 +49,5 @@ mvn spring-boot:run
 This is an academic/demo mini project. The login session is kept in browser localStorage and the management endpoints are
 intentionally simple for a student project. For production use, add Spring Security, JWT/session authentication,
 authorization checks, CSRF protection, payment gateway integration and stronger validation.
+## Screenshots
+(add pannunga - buyer home, seller dashboard, admin panel, cart/checkout)
