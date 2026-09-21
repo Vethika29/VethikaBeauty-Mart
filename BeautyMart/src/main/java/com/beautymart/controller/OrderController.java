@@ -24,13 +24,18 @@ public class OrderController {
  }
 
  @PostMapping("/checkout/{userId}")
- public ResponseEntity<?> checkout(@PathVariable Long userId){
+ public ResponseEntity<?> checkout(@PathVariable Long userId, @RequestBody Map<String,String> body){
  User u=users.findById(userId).orElseThrow();
  List<CartItem> items=cart.findByUser(u);
  if(items.isEmpty()) return ResponseEntity.badRequest().body(Map.of("message","Cart is empty."));
+
+ String address=body.getOrDefault("address","").trim();
+ String paymentMethod=body.getOrDefault("paymentMethod","COD").trim();
+ if(address.isEmpty()) return ResponseEntity.badRequest().body(Map.of("message","Shipping address is required."));
+
  BigDecimal total=BigDecimal.ZERO;
  for(CartItem i:items) total=total.add(i.getProduct().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())));
- Order o=new Order(u,total,"PLACED");
+ Order o=new Order(u,total,"PLACED",address,paymentMethod);
  for(CartItem i:items){
  Product p=i.getProduct();
  if(p.getStock()<i.getQuantity()) return ResponseEntity.badRequest().body(Map.of("message","Insufficient stock for "+p.getName()));

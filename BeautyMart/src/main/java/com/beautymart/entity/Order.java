@@ -15,12 +15,15 @@ public class Order {
  @Column(nullable=false, precision=10, scale=2) private BigDecimal totalAmount;
  @Column(nullable=false) private String status;
  @Column(nullable=false) private LocalDateTime createdAt;
+ @Column(nullable=true) private String shippingAddress;
+ @Column(nullable=true) private String paymentMethod;
  @OneToMany(mappedBy="order", cascade=CascadeType.ALL, orphanRemoval=true)
  private List<OrderItem> items = new ArrayList<>();
 
  public Order(){}
- public Order(User user, BigDecimal totalAmount, String status){
+ public Order(User user, BigDecimal totalAmount, String status, String shippingAddress, String paymentMethod){
  this.user=user;this.totalAmount=totalAmount;this.status=status;this.createdAt=LocalDateTime.now();
+ this.shippingAddress=shippingAddress;this.paymentMethod=paymentMethod;
  }
  public Long getId(){return id;}
  public User getUser(){return user;}
@@ -28,5 +31,7 @@ public class Order {
  public String getStatus(){return status;}
  public void setStatus(String v){status=v;}
  public LocalDateTime getCreatedAt(){return createdAt;}
+ public String getShippingAddress(){return shippingAddress;}
+ public String getPaymentMethod(){return paymentMethod;}
  public List<OrderItem> getItems(){return items;}
 }
